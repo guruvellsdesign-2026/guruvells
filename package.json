@@ -20,7 +20,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "^4.0.432",
-    "sanity": "^3.71.0",
+    "sanity": "^5.13.0",
     "styled-components": "^6.1.15"
   },
   "devDependencies": {
