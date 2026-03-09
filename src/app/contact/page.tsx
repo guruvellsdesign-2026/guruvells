@@ -7,10 +7,17 @@ export const revalidate = 0;
 
 export default async function ContactPage() {
     // Fetch Contact page data from Sanity
-    const data = await client.fetch(contactPageQuery).catch((err) => {
-        console.error("CONTACT FETCH ERROR:", err);
-        return null;
-    });
+    let data = null;
+    const isSanityReady = true; // Assuming Sanity is always ready for this context, or define it elsewhere
+
+    if (isSanityReady) {
+        try {
+            data = await client.fetch(contactPageQuery, {}, { next: { revalidate: 0 } });
+        } catch (err) {
+            console.error("CONTACT FETCH ERROR:", err);
+            data = null;
+        }
+    }
 
     console.log("SANITY SYNC CHECK (Contact):", { hasData: !!data });
 
