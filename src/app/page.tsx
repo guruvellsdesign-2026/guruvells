@@ -17,7 +17,7 @@ import {
 
 export const revalidate = 0;
 
-const isSanityReady = Boolean(projectId && projectId !== 'dummyProjectId');
+const isSanityReady = Boolean(projectId);
 
 export default async function HomePage() {
   // Fetch all homepage section data from Sanity (server-side)

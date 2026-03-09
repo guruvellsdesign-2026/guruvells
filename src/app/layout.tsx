@@ -19,7 +19,7 @@ const playfair = Playfair_Display({
 });
 
 // Only try to fetch from Sanity if a real project ID is configured
-const isSanityReady = Boolean(projectId && projectId !== 'dummyProjectId');
+const isSanityReady = Boolean(projectId);
 
 export async function generateMetadata(): Promise<Metadata> {
   if (!isSanityReady) {

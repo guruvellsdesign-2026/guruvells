@@ -3,7 +3,7 @@ import { ParallaxImage } from "@/components/animations/ParallaxImage";
 import { client, projectId } from "@/sanity/lib/client";
 import { projectDetailQuery } from "@/sanity/lib/queries";
 
-const isSanityReady = Boolean(projectId && projectId !== 'dummyProjectId');
+const isSanityReady = Boolean(projectId);
 
 // Font size mappings
 const titleSizeMap: Record<string, string> = {
