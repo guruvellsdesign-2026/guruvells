@@ -5,8 +5,9 @@ export default defineCliConfig({
     projectId: 'do4k1nvo',
     dataset: 'production'
   },
-  autoUpdates: true,
+  autoUpdates: false,
   deployment: {
     appId: 'lmrkpno2os2ktlli1xj0yi6t',
+    studioHost: 'guruvells',
   },
 });
