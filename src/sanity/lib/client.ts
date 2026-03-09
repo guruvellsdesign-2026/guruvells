@@ -12,5 +12,5 @@ export const client = createClient({
     perspective: 'published',
 });
 
-// Diagnostic log to confirm client configuration in the logs
+// Diagnostic log to confirm client configuration (Triggering Fresh Vercel Build)
 console.log(`SANITY CLIENT INITIALIZED: Project=${projectId}, Dataset=${dataset}, CDN=${client.config().useCdn}`);
