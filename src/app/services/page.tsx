@@ -7,7 +7,12 @@ export const revalidate = 0;
 
 export default async function ServicesPage() {
     // Fetch Services page data from Sanity
-    const data = await client.fetch(servicesPageQuery).catch(() => null);
+    const data = await client.fetch(servicesPageQuery).catch((err) => {
+        console.error("SERVICES FETCH ERROR:", err);
+        return null;
+    });
+
+    console.log("SANITY SYNC CHECK (Services):", { hasData: !!data });
 
     // Fallbacks
     const heroLabel = data?.heroLabel || "( Disciplines )";

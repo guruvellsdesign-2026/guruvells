@@ -33,18 +33,26 @@ export default async function HomePage() {
       [heroData, philosophyData, sustainabilityData, ctaData, footerData, projectsData] =
         await Promise.all([
           client.fetch(heroSectionQuery).catch((err) => { console.error("HERO FETCH ERROR:", err); return null; }),
-          client.fetch(philosophySectionQuery).catch(() => null),
-          client.fetch(sustainabilitySectionQuery).catch(() => null),
-          client.fetch(ctaSectionQuery).catch(() => null),
-          client.fetch(footerSectionQuery).catch(() => null),
-          client.fetch(portfolioProjectsQuery).catch(() => []),
+          client.fetch(philosophySectionQuery).catch((err) => { console.error("PHILOSOPHY FETCH ERROR:", err); return null; }),
+          client.fetch(sustainabilitySectionQuery).catch((err) => { console.error("SUSTAINABILITY FETCH ERROR:", err); return null; }),
+          client.fetch(ctaSectionQuery).catch((err) => { console.error("CTA FETCH ERROR:", err); return null; }),
+          client.fetch(footerSectionQuery).catch((err) => { console.error("FOOTER FETCH ERROR:", err); return null; }),
+          client.fetch(portfolioProjectsQuery).catch((err) => { console.error("PROJECTS FETCH ERROR:", err); return []; }),
         ]);
         
-      console.log("SANITY HERO DATA IN PAGE:", heroData);
-    } catch {
-      // Gracefully degrade — all fallbacks will be used
-      console.log("SANITY PROMISE ALL CAUGHT ERROR");
+      console.log("SANITY SYNC CHECK:", {
+        hero: !!heroData,
+        philosophy: !!philosophyData,
+        sustainability: !!sustainabilityData,
+        cta: !!ctaData,
+        footer: !!footerData,
+        projectsCount: projectsData?.length || 0
+      });
+    } catch (err) {
+      console.error("CRITICAL SANITY FETCH ERROR:", err);
     }
+  } else {
+    console.warn("SANITY NOT READY: Using hardcoded fallbacks.");
   }
 
   // Map Sanity project data to the format the slider expects

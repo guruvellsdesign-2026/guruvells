@@ -8,6 +8,6 @@ export default defineCliConfig({
   autoUpdates: false,
   deployment: {
     appId: 'lmrkpno2os2ktlli1xj0yi6t',
-    hostname: 'guruvells',
+    hostname: 'guruvells-design',
   },
 });

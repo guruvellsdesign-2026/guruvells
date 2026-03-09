@@ -6,7 +6,12 @@ export const revalidate = 0;
 
 export default async function ContactPage() {
     // Fetch Contact page data from Sanity
-    const data = await client.fetch(contactPageQuery).catch(() => null);
+    const data = await client.fetch(contactPageQuery).catch((err) => {
+        console.error("CONTACT FETCH ERROR:", err);
+        return null;
+    });
+
+    console.log("SANITY SYNC CHECK (Contact):", { hasData: !!data });
 
     // Fallbacks
     const introText = data?.introText || "Contact us directly or submit a form enquiry and a member of the team will be in touch.";

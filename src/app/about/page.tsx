@@ -5,7 +5,12 @@ import { aboutPageQuery } from "@/sanity/lib/queries";
 export const revalidate = 0;
 
 export default async function AboutPage() {
-    const data = await client.fetch(aboutPageQuery).catch(() => null);
+    const data = await client.fetch(aboutPageQuery).catch((err) => {
+        console.error("ABOUT FETCH ERROR:", err);
+        return null;
+    });
+
+    console.log("SANITY SYNC CHECK (About):", { hasData: !!data });
 
     const heroHeading = data?.introHeading || "Who We Are";
     const heroHeadingSize = data?.introHeadingSize || "text-4xl md:text-6xl lg:text-[5.5rem]";
