@@ -8,7 +8,7 @@ export const revalidate = 0;
 
 export default async function ServicesPage() {
     // Fetch Services page data from Sanity
-    const data = await client.fetch(servicesPageQuery).catch((err) => {
+    const data = await client.fetch(servicesPageQuery, {}, { next: { revalidate: 0 } }).catch((err) => {
         console.error("SERVICES FETCH ERROR:", err);
         return null;
     });
