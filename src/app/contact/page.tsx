@@ -2,6 +2,7 @@ import { client } from "@/sanity/lib/client";
 import { contactPageQuery } from "@/sanity/lib/queries";
 import ContactForm from "@/components/ContactForm";
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function ContactPage() {

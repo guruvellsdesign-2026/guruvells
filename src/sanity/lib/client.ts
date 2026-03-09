@@ -8,5 +8,9 @@ export const client = createClient({
     projectId,
     dataset,
     apiVersion,
-    useCdn: false,
+    useCdn: false, // Always set to false for immediate updates
+    perspective: 'published',
 });
+
+// Diagnostic log to confirm client configuration in the logs
+console.log(`SANITY CLIENT INITIALIZED: Project=${projectId}, Dataset=${dataset}, CDN=${client.config().useCdn}`);

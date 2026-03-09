@@ -3,6 +3,7 @@ import { servicesPageQuery } from "@/sanity/lib/queries";
 import { RevealText } from "@/components/animations/RevealText";
 import Image from "next/image";
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function ServicesPage() {

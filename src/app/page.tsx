@@ -15,8 +15,8 @@ import {
   portfolioProjectsQuery,
 } from "@/sanity/lib/queries";
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
 const isSanityReady = Boolean(projectId);
 
 export default async function HomePage() {

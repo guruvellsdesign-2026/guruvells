@@ -3,6 +3,8 @@ import { ParallaxImage } from "@/components/animations/ParallaxImage";
 import { client, projectId } from "@/sanity/lib/client";
 import { projectDetailQuery } from "@/sanity/lib/queries";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 const isSanityReady = Boolean(projectId);
 
 // Font size mappings

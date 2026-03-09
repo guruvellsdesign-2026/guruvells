@@ -2,6 +2,7 @@ import Image from "next/image";
 import { client } from "@/sanity/lib/client";
 import { aboutPageQuery } from "@/sanity/lib/queries";
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function AboutPage() {

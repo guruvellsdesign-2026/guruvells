@@ -6,6 +6,7 @@ import { client, projectId } from "@/sanity/lib/client";
 import { globalSettingsQuery, navigationQuery } from "@/sanity/lib/queries";
 import "./globals.css";
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const inter = Inter({
