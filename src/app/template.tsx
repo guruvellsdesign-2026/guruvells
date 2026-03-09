@@ -7,8 +7,15 @@ export default function Template({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [isAnimating, setIsAnimating] = useState(true);
 
+    const isStudio = pathname?.startsWith("/studio");
+
     // Re-trigger animation on every route change
     useEffect(() => {
+        if (isStudio) {
+            setIsAnimating(false);
+            return;
+        }
+        
         setIsAnimating(true);
         // The animation duraton is roughly 7s total, but the mask clears by ~4.5s.
         // We'll unmount the heavy SVG from the DOM after 7s to restore click interactivity to the page below.
@@ -17,7 +24,11 @@ export default function Template({ children }: { children: React.ReactNode }) {
         }, 7000);
 
         return () => clearTimeout(timer);
-    }, [pathname]);
+    }, [pathname, isStudio]);
+
+    if (isStudio) {
+        return <>{children}</>;
+    }
 
     return (
         <div className="relative w-full min-h-screen">
