@@ -6,5 +6,8 @@ export default defineCliConfig({
     dataset: 'production'
   },
   studioHost: 'guruvells',
+  deployment: {
+    appId: 'lmrkpno2os2ktlli1xj0yi6t',
+  },
   autoUpdates: false,
 });
