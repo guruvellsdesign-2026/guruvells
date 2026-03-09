@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   }
   try {
-    const settings = await client.fetch(globalSettingsQuery, {}, { revalidate: 0 });
+    const settings = await client.fetch(globalSettingsQuery, {}, { next: { revalidate: 0 } });
     return {
       title: settings?.siteTitle || "Guruvells Architecture",
       description: settings?.siteDescription || "Innovative Architecture & Sustainable Design Studio.",
@@ -52,7 +52,7 @@ export default async function RootLayout({
   let navData = null;
   if (isSanityReady) {
     try {
-      navData = await client.fetch(navigationQuery);
+      navData = await client.fetch(navigationQuery, {}, { next: { revalidate: 0 } });
     } catch {
       navData = null;
     }
