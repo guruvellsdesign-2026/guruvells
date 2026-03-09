@@ -10,4 +10,4 @@ export default defineCliConfig({
     appId: 'lmrkpno2os2ktlli1xj0yi6t',
   },
   autoUpdates: false,
-});
+} as any);
