@@ -32,7 +32,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
     let sanityProject: any = null;
     if (isSanityReady) {
         try {
-            sanityProject = await client.fetch(projectDetailQuery, { slug });
+            sanityProject = await client.fetch(projectDetailQuery, { slug }, { next: { revalidate: 0 } });
         } catch {
             sanityProject = null;
         }
