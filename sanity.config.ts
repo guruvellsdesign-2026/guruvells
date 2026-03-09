@@ -12,7 +12,7 @@ const singletonTypes = new Set([
 export default defineConfig({
     projectId: 'do4k1nvo',
     dataset: 'production',
-    basePath: typeof window !== 'undefined' && window.location.hostname.includes('sanity.studio') ? '/' : '/studio',
+    basePath: process.env.NEXT_PUBLIC_SANITY_STUDIO_IN_NEXTJS === 'true' ? '/studio' : '/',
     title: 'Guruvells Studio',
     plugins: [
         structureTool({
