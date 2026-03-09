@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   }
   try {
-    const settings = await client.fetch(globalSettingsQuery);
+    const settings = await client.fetch(globalSettingsQuery, {}, { revalidate: 0 });
     return {
       title: settings?.siteTitle || "Guruvells Architecture",
       description: settings?.siteDescription || "Innovative Architecture & Sustainable Design Studio.",

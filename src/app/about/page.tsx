@@ -6,8 +6,8 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function AboutPage() {
-    const data = await client.fetch(aboutPageQuery).catch((err) => {
-        console.error("ABOUT FETCH ERROR:", err);
+    const data = await client.fetch(servicesPageQuery, {}, { next: { revalidate: 0 } }).catch((err) => {
+        console.error("SERVICES FETCH ERROR:", err);
         return null;
     });
 

@@ -32,12 +32,12 @@ export default async function HomePage() {
     try {
       [heroData, philosophyData, sustainabilityData, ctaData, footerData, projectsData] =
         await Promise.all([
-          client.fetch(heroSectionQuery).catch((err) => { console.error("HERO FETCH ERROR:", err); return null; }),
-          client.fetch(philosophySectionQuery).catch((err) => { console.error("PHILOSOPHY FETCH ERROR:", err); return null; }),
-          client.fetch(sustainabilitySectionQuery).catch((err) => { console.error("SUSTAINABILITY FETCH ERROR:", err); return null; }),
-          client.fetch(ctaSectionQuery).catch((err) => { console.error("CTA FETCH ERROR:", err); return null; }),
-          client.fetch(footerSectionQuery).catch((err) => { console.error("FOOTER FETCH ERROR:", err); return null; }),
-          client.fetch(portfolioProjectsQuery).catch((err) => { console.error("PROJECTS FETCH ERROR:", err); return []; }),
+          client.fetch(heroSectionQuery, {}, { next: { revalidate: 0 } }).catch((err) => { console.error("HERO FETCH ERROR:", err); return null; }),
+          client.fetch(philosophySectionQuery, {}, { next: { revalidate: 0 } }).catch((err) => { console.error("PHILOSOPHY FETCH ERROR:", err); return null; }),
+          client.fetch(sustainabilitySectionQuery, {}, { next: { revalidate: 0 } }).catch((err) => { console.error("SUSTAINABILITY FETCH ERROR:", err); return null; }),
+          client.fetch(ctaSectionQuery, {}, { next: { revalidate: 0 } }).catch((err) => { console.error("CTA FETCH ERROR:", err); return null; }),
+          client.fetch(footerSectionQuery, {}, { next: { revalidate: 0 } }).catch((err) => { console.error("FOOTER FETCH ERROR:", err); return null; }),
+          client.fetch(portfolioProjectsQuery, {}, { next: { revalidate: 0 } }).catch((err) => { console.error("PROJECTS FETCH ERROR:", err); return []; }),
         ]);
         
       console.log("SANITY SYNC CHECK:", {
