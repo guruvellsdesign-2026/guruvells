@@ -31,12 +31,20 @@ export function ParallaxCta({ data }: { data?: any }) {
                 scrollTrigger: {
                     trigger: sectionRef.current,
                     start: "top top",
-                    end: isMobile ? "+=150%" : "+=200%",
+                    end: isMobile ? "+=120%" : "+=200%",
                     pin: true,
-                    scrub: isMobile ? 0.5 : 1,
+                    pinSpacing: true,
+                    anticipatePin: 1,
+                    scrub: isMobile ? 0.3 : 1,
                     invalidateOnRefresh: true,
                     fastScrollEnd: true,
                     preventOverlaps: true,
+                    onToggle: (self) => {
+                        const cols = sectionRef.current?.querySelectorAll('.img-column');
+                        cols?.forEach(el => {
+                            (el as HTMLElement).style.willChange = self.isActive ? 'transform' : 'auto';
+                        });
+                    },
                 }
             });
 
@@ -44,6 +52,7 @@ export function ParallaxCta({ data }: { data?: any }) {
                 y: "-100vh",
                 ease: "none",
                 duration: 1,
+                force3D: true,
                 stagger: {
                     amount: isMobile ? 0.15 : 0.3,
                     from: "random"
@@ -128,7 +137,7 @@ export function ParallaxCta({ data }: { data?: any }) {
                 {images.map((col: string[], i: number) => (
                     <div
                         key={i}
-                        className="img-column flex-1 flex flex-col gap-[10vh] border-r border-white/5 last:border-r-0 translate-y-[100vh] will-change-transform"
+                        className="img-column flex-1 flex flex-col gap-[10vh] border-r border-white/5 last:border-r-0 translate-y-[100vh]"
                         style={{ paddingTop: paddings[i] }}
                     >
                         {col.map((img: string, j: number) => (
@@ -143,7 +152,7 @@ export function ParallaxCta({ data }: { data?: any }) {
             </div>
 
             {/* The white mask that wipes up */}
-            <div className="white-wipe absolute bottom-0 left-0 w-full h-[0%] bg-cream z-20 will-change-[height]" />
+            <div className="white-wipe absolute bottom-0 left-0 w-full h-[0%] bg-cream z-20" />
 
             {/* CTA Text - Now Clickable */}
             <div

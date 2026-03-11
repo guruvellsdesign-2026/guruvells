@@ -16,6 +16,9 @@ export default function SmoothScroll({
         // Register GSAP plugins
         gsap.registerPlugin(ScrollTrigger);
 
+        // Enable GSAP lag smoothing to prevent frame drops during fast scrolls
+        gsap.ticker.lagSmoothing(500, 33);
+
         // Detect mobile for optimized Lenis settings
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
         checkMobile();
@@ -27,12 +30,13 @@ export default function SmoothScroll({
         <ReactLenis
             root
             options={{
-                lerp: isMobile ? 0.15 : 0.1,       // Snappier on mobile
-                duration: isMobile ? 1.0 : 1.5,     // Shorter animation on mobile
+                lerp: isMobile ? 0.12 : 0.1,
+                duration: isMobile ? 0.8 : 1.5,
                 smoothWheel: true,
-                touchMultiplier: 1.5,                // Better touch response
-                syncTouch: true,                     // Sync touch events for smoother feel
-                syncTouchLerp: 0.075,                // Smooth touch interpolation
+                touchMultiplier: 2.0,            // Snappier touch response
+                syncTouch: false,                 // Use native iOS/Android momentum — no hijacking
+                syncTouchLerp: 0.075,
+                autoResize: true,
             }}
         >
             {children}

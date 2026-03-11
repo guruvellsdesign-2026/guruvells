@@ -41,6 +41,8 @@ export function PinnedSlider({ slides }: PinnedSliderProps) {
                             start: "top top",
                             end: `+=${totalSlides * 100}%`,
                             pin: true,
+                            pinSpacing: true,
+                            anticipatePin: 1,
                             scrub: 0.8,
                             fastScrollEnd: true,
                             onUpdate: (self) => {
@@ -52,6 +54,11 @@ export function PinnedSlider({ slides }: PinnedSliderProps) {
                                     counterRef.current.textContent = String(idx + 1).padStart(2, "0");
                                 }
                             },
+                            onToggle: (self) => {
+                                slidesRef.current.forEach(el => {
+                                    if (el) el.style.willChange = self.isActive ? 'clip-path, transform' : 'auto';
+                                });
+                            },
                         },
                     });
 
@@ -59,12 +66,13 @@ export function PinnedSlider({ slides }: PinnedSliderProps) {
                     for (let i = 1; i < totalSlides; i++) {
                         const slide = slidesRef.current[i];
                         if (slide) {
-                            gsap.set(slide, { clipPath: "inset(100% 0 0 0)" });
+                            gsap.set(slide, { clipPath: "inset(100% 0 0 0)", force3D: true });
 
                             tl.to(slide, {
                                 clipPath: "inset(0% 0 0 0)",
                                 duration: 1,
                                 ease: "power2.inOut",
+                                force3D: true,
                             });
 
                             tl.to({}, { duration: 0.3 });

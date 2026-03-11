@@ -6,8 +6,13 @@ import { usePathname } from "next/navigation";
 export default function Template({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [isAnimating, setIsAnimating] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
 
     const isStudio = pathname?.startsWith("/studio");
+
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 768);
+    }, []);
 
     // Re-trigger animation on every route change — optimized timing
     useEffect(() => {
@@ -17,17 +22,20 @@ export default function Template({ children }: { children: React.ReactNode }) {
         }
         
         setIsAnimating(true);
-        // Reduced from 7s to 3s for much faster page entry
+        // Faster on mobile (1.5s), snappy on desktop (2s)
+        const duration = isMobile ? 1500 : 2000;
         const timer = setTimeout(() => {
             setIsAnimating(false);
-        }, 3000);
+        }, duration);
 
         return () => clearTimeout(timer);
-    }, [pathname, isStudio]);
+    }, [pathname, isStudio, isMobile]);
 
     if (isStudio) {
         return <>{children}</>;
     }
+
+    const animDuration = isMobile ? '1.5s' : '2s';
 
     return (
         <div className="relative w-full min-h-screen">
@@ -37,38 +45,28 @@ export default function Template({ children }: { children: React.ReactNode }) {
 
             {/* Global Page Transition Mask — GPU-optimized */}
             {isAnimating && (
-                <div className="fixed inset-0 z-[999] pointer-events-none will-change-transform">
+                <div className="fixed inset-0 z-[999] pointer-events-none" style={{ contain: 'strict' }}>
                     <style dangerouslySetInnerHTML={{ __html: `
                         @keyframes introTextAnim {
-                            0% { opacity: 0; transform: translateY(20px); }
-                            25% { opacity: 1; transform: translateY(0); }
-                            75% { opacity: 1; transform: translateY(0); }
-                            100% { opacity: 0; transform: translateY(-20px); }
+                            0% { opacity: 0; transform: translate3d(0, 20px, 0); }
+                            25% { opacity: 1; transform: translate3d(0, 0, 0); }
+                            75% { opacity: 1; transform: translate3d(0, 0, 0); }
+                            100% { opacity: 0; transform: translate3d(0, -20px, 0); }
                         }
 
                         @keyframes globalVelMaster {
-                            0% { opacity: 0; transform: scale(1); }
-                            30% {
-                                opacity: 0;
-                                transform: scale(1);
-                            }
-                            40% {
-                                opacity: 1;
-                                transform: scale(1);
-                            }
-                            55% {
-                                opacity: 1;
-                                transform: scale(0.75);
-                            }
-                            100% {
-                                opacity: 1;
-                                transform: scale(500);
-                            }
+                            0% { opacity: 0; transform: scale3d(1, 1, 1); }
+                            30% { opacity: 0; transform: scale3d(1, 1, 1); }
+                            40% { opacity: 1; transform: scale3d(1, 1, 1); }
+                            55% { opacity: 1; transform: scale3d(0.75, 0.75, 1); }
+                            100% { opacity: 1; transform: scale3d(500, 500, 1); }
                         }
 
                         .animate-global-vel {
-                            animation: globalVelMaster 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                            animation: globalVelMaster ${animDuration} cubic-bezier(0.4, 0, 0.2, 1) forwards;
                             will-change: transform, opacity;
+                            backface-visibility: hidden;
+                            -webkit-backface-visibility: hidden;
                         }
                     `}} />
 
@@ -105,10 +103,11 @@ export default function Template({ children }: { children: React.ReactNode }) {
                                 <span 
                                     key={index} 
                                     style={{ 
-                                        animation: 'introTextAnim 1.8s forwards',
-                                        animationDelay: `${index * 0.06}s`,
+                                        animation: `introTextAnim ${isMobile ? '1.2s' : '1.8s'} forwards`,
+                                        animationDelay: `${index * (isMobile ? 0.04 : 0.06)}s`,
                                         opacity: 0,
-                                        willChange: 'transform, opacity',
+                                        backfaceVisibility: 'hidden',
+                                        WebkitBackfaceVisibility: 'hidden',
                                     }}
                                 >
                                     {letter}

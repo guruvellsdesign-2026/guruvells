@@ -64,11 +64,19 @@ export function ParallaxPhilosophy({ data }: { data?: any }) {
                 scrollTrigger: {
                     trigger: sectionRef.current,
                     start: "center center", 
-                    end: isMobile ? "+=180%" : "+=250%",
+                    end: isMobile ? "+=120%" : "+=250%",
                     pin: true,
-                    scrub: isMobile ? 0.5 : 1,
+                    pinSpacing: true,
+                    anticipatePin: 1,
+                    scrub: isMobile ? 0.3 : 1,
                     fastScrollEnd: true,
                     preventOverlaps: true,
+                    onToggle: (self) => {
+                        const els = [...textRefs.current, ...imageRefs.current].filter(Boolean);
+                        els.forEach(el => {
+                            if (el) el.style.willChange = self.isActive ? 'transform, opacity' : 'auto';
+                        });
+                    },
                 }
             });
 
@@ -82,7 +90,8 @@ export function ParallaxPhilosophy({ data }: { data?: any }) {
                 tl.to(layer, {
                     y: styleData.yTarget * mobileScale,
                     opacity: isAnchor ? 1 : 0, 
-                    ease: "power1.inOut"
+                    ease: "power1.inOut",
+                    force3D: true,
                 }, 0);
             });
 
@@ -94,6 +103,7 @@ export function ParallaxPhilosophy({ data }: { data?: any }) {
                 tl.to(img, {
                     y: styleData.speed * mobileScale,
                     ease: "none",
+                    force3D: true,
                 }, 0);
             });
 
@@ -115,7 +125,7 @@ export function ParallaxPhilosophy({ data }: { data?: any }) {
                 <div
                     key={i}
                     ref={(el) => { imageRefs.current[i] = el; }}
-                    className={`absolute z-[1] overflow-hidden mix-blend-multiply will-change-transform ${img.wrapperClass}`}
+                    className={`absolute z-[1] overflow-hidden mix-blend-multiply ${img.wrapperClass}`}
                 >
                     <Image src={img.src} alt="" fill sizes="(max-width: 768px) 35vw, 24vw" className="object-cover" />
                 </div>
@@ -130,7 +140,7 @@ export function ParallaxPhilosophy({ data }: { data?: any }) {
                     <div
                         key={i}
                         ref={(el) => { textRefs.current[i] = el; }}
-                        className={`will-change-transform pt-1 md:pt-2 ${layer.style}`}
+                        className={`pt-1 md:pt-2 ${layer.style}`}
                     >
                         {layer.text}
                     </div>

@@ -37,16 +37,22 @@ export function ParallaxImage({
                 // Inner image is scale(1.2), animate yPercent from -15 to 15
                 gsap.fromTo(
                     imageRef.current,
-                    { yPercent: -15 * speed / 0.15 },
+                    { yPercent: -15 * speed / 0.15, force3D: true },
                     {
                         yPercent: 15 * speed / 0.15,
                         ease: "none",
+                        force3D: true,
                         scrollTrigger: {
                             trigger: containerRef.current,
                             start: "top bottom",
                             end: "bottom top",
                             scrub: 0.5,
                             fastScrollEnd: true,
+                            onToggle: (self) => {
+                                if (imageRef.current) {
+                                    imageRef.current.style.willChange = self.isActive ? 'transform' : 'auto';
+                                }
+                            },
                         },
                     }
                 );
@@ -60,17 +66,24 @@ export function ParallaxImage({
                             scale: 0.8,
                             opacity: 0.6,
                             borderRadius: "20px",
+                            force3D: true,
                         },
                         {
                             scale: 1,
                             opacity: 1,
                             borderRadius: "0px",
                             ease: "power2.out",
+                            force3D: true,
                             scrollTrigger: {
                                 trigger: wrapperRef.current,
                                 start: "top 90%",
                                 end: "center center",
                                 scrub: 1,
+                                onToggle: (self) => {
+                                    if (wrapperRef.current) {
+                                        wrapperRef.current.style.willChange = self.isActive ? 'transform, opacity' : 'auto';
+                                    }
+                                },
                             },
                         }
                     );
@@ -86,7 +99,7 @@ export function ParallaxImage({
             {/* Spec: inner image must be scale(1.2) to give room for parallax travel */}
             <div
                 ref={imageRef}
-                className="absolute inset-0 w-full h-full will-change-transform"
+                className="absolute inset-0 w-full h-full"
                 style={{ transform: "scale(1.2)" }}
             >
                 <Image
@@ -103,7 +116,7 @@ export function ParallaxImage({
 
     if (scaleReveal) {
         return (
-            <div ref={wrapperRef} className="will-change-transform overflow-hidden">
+            <div ref={wrapperRef} className="overflow-hidden">
                 {inner}
             </div>
         );

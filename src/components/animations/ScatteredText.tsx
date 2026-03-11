@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 
@@ -21,58 +21,63 @@ export function ScatteredText({
 }: ScatteredTextProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const charsRef = useRef<(HTMLSpanElement | null)[]>([]);
+    const [isMobile, setIsMobile] = useState(false);
 
     // Split into words, then characters, to prevent mid-word wrapping
     const words = text.split(" ").map(word => {
         return word.split("").map(char => ({ char, isSpace: false }));
     });
 
+    // Detect mobile safely in useEffect (no SSR window access)
+    useEffect(() => {
+        setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    }, []);
+
     useEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
 
         if (containerRef.current && charsRef.current.length > 0) {
-            const isMobile = window.matchMedia("(max-width: 768px)").matches;
             const scatterRange = isMobile ? 120 : 500;
 
             const ctx = gsap.context(() => {
+                // Batch-set initial scattered state for all chars at once
+                const validChars = charsRef.current.filter(Boolean) as HTMLSpanElement[];
+                
+                validChars.forEach((charEl) => {
+                    gsap.set(charEl, {
+                        x: gsap.utils.random(-scatterRange, scatterRange),
+                        y: gsap.utils.random(-scatterRange, scatterRange),
+                        rotation: gsap.utils.random(-90, 90),
+                        opacity: 0,
+                        force3D: true,
+                    });
+                });
+
                 const tl = gsap.timeline({
                     scrollTrigger: {
                         trigger: containerRef.current,
                         start: startPos,
                         end: endPos,
-                        scrub: isMobile ? 0.5 : 1,
+                        scrub: isMobile ? 0.3 : 1,
                         fastScrollEnd: true,
                     },
                 });
 
-                // Spec: each character gets random x, y, rotation.
-                // Animate FROM scattered state TO natural DOM position.
-                charsRef.current.forEach((charEl) => {
-                    if (charEl) {
-                        tl.fromTo(
-                            charEl,
-                            {
-                                x: gsap.utils.random(-scatterRange, scatterRange),
-                                y: gsap.utils.random(-scatterRange, scatterRange),
-                                rotation: gsap.utils.random(-90, 90),
-                                opacity: 0,
-                            },
-                            {
-                                x: 0,
-                                y: 0,
-                                rotation: 0,
-                                opacity: 1,
-                                ease: "power1.inOut",
-                            },
-                            0 // All characters animate simultaneously on the timeline
-                        );
-                    }
-                });
+                // Single timeline tween for all characters (more efficient)
+                tl.to(validChars, {
+                    x: 0,
+                    y: 0,
+                    rotation: 0,
+                    opacity: 1,
+                    ease: "power1.inOut",
+                    force3D: true,
+                    stagger: 0, // All at once on the timeline
+                }, 0);
             }, containerRef);
 
             return () => ctx.revert();
         }
-    }, [startPos, endPos]);
+    }, [startPos, endPos, isMobile]);
 
     let charIndex = 0;
 
@@ -80,7 +85,7 @@ export function ScatteredText({
         <div
             ref={containerRef}
             className={containerClassName}
-            style={{ minHeight: typeof window !== 'undefined' && window.innerWidth < 768 ? '120vh' : '150vh' }}
+            style={{ minHeight: isMobile ? '120vh' : '150vh' }}
         >
             <div className={`flex flex-wrap items-center justify-center gap-x-[0.4em] gap-y-[0.1em] ${className}`}>
                 {words.map((word, wordIdx) => (
@@ -93,7 +98,7 @@ export function ScatteredText({
                                     ref={(el) => {
                                         charsRef.current[idx] = el;
                                     }}
-                                    className="inline-block will-change-transform"
+                                    className="inline-block"
                                     style={{ marginRight: charIdx === word.length - 1 ? 0 : "0.05em" }}
                                 >
                                     {item.char}

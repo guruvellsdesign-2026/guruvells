@@ -1,22 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 
 export function Navigation({ navData }: { navData?: any }) {
     const router = useRouter();
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const rafRef = useRef<number>(0);
+
+    // RAF-debounced scroll handler to prevent layout thrashing
+    const handleScroll = useCallback(() => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        rafRef.current = requestAnimationFrame(() => {
+            setScrolled(window.scrollY > 50);
+        });
+    }, []);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
         window.addEventListener("scroll", handleScroll, { passive: true });
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
+    }, [handleScroll]);
 
     // Prevent body scroll when mobile menu is open
     useEffect(() => {
@@ -61,7 +70,7 @@ export function Navigation({ navData }: { navData?: any }) {
         : "text-dark border-dark/10 hover:bg-dark hover:text-white";
 
     return (
-        <>
+        <LazyMotion features={domAnimation}>
             <header 
                 className={`fixed top-0 left-0 w-full px-4 md:px-12 py-4 md:py-6 z-[100] transition-all duration-700 grid grid-cols-3 items-center ${
                     scrolled && !menuOpen ? "bg-cream/90 backdrop-blur-xl py-3 md:py-4 shadow-sm" : "bg-transparent"
@@ -86,6 +95,7 @@ export function Navigation({ navData }: { navData?: any }) {
                     <button 
                         className="flex md:hidden flex-col justify-center items-center w-8 h-8 z-[101]"
                         onClick={() => setMenuOpen(!menuOpen)}
+                        aria-label="Toggle menu"
                     >
                         <span className={`block w-6 h-[1.5px] transition-all duration-300 ${menuOpen ? `rotate-45 translate-y-[1.5px] bg-white` : `bg-current ${textColorClass}`}`} />
                         <span className={`block w-6 h-[1.5px] transition-all duration-300 mt-1.5 ${menuOpen ? `-rotate-45 -translate-y-[6px] bg-white` : `bg-current ${textColorClass}`}`} />
@@ -128,7 +138,7 @@ export function Navigation({ navData }: { navData?: any }) {
             {/* Mobile Fullscreen Menu Overlay */}
             <AnimatePresence>
                 {menuOpen && (
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: "-100%" }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: "-100%" }}
@@ -137,7 +147,7 @@ export function Navigation({ navData }: { navData?: any }) {
                     >
                         <nav className="flex flex-col items-center gap-10 mt-12">
                             {links.map((link: any, i: number) => (
-                                <motion.button
+                                <m.button
                                     key={link.label}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -147,12 +157,12 @@ export function Navigation({ navData }: { navData?: any }) {
                                 >
                                     {link.label}
                                     <span className="font-sans text-[9px] tracking-[0.3em] text-cream/30 uppercase block">0{i+1}</span>
-                                </motion.button>
+                                </m.button>
                             ))}
                         </nav>
                         
                         {/* Mobile Footer Area inside Menu */}
-                        <motion.div 
+                        <m.div 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.6 }}
@@ -168,10 +178,10 @@ export function Navigation({ navData }: { navData?: any }) {
                                     </a>
                                 ))}
                             </div>
-                        </motion.div>
-                    </motion.div>
+                        </m.div>
+                    </m.div>
                 )}
             </AnimatePresence>
-        </>
+        </LazyMotion>
     );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display, Cinzel } from "next/font/google";
 import SmoothScroll from "@/components/SmoothScroll";
 import { Navigation } from "@/components/Navigation";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { client, projectId } from "@/sanity/lib/client";
 import { globalSettingsQuery, navigationQuery } from "@/sanity/lib/queries";
 import "../globals.css";
@@ -71,7 +72,9 @@ export default async function RootLayout({
         className={`${inter.variable} ${playfair.variable} ${cinzel.variable} antialiased`}
       >
         <Navigation navData={navData} />
-        <SmoothScroll>{children}</SmoothScroll>
+        <ErrorBoundary>
+          <SmoothScroll>{children}</SmoothScroll>
+        </ErrorBoundary>
       </body>
     </html>
   );
