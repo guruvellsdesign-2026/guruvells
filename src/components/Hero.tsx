@@ -24,19 +24,15 @@ export function Hero({ data }: { data?: any }) {
     return (
         <section className="relative w-full h-screen overflow-hidden bg-[#111]">
             <style dangerouslySetInnerHTML={{ __html: `
-                @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap');
-
-                .font-cinzel { font-family: 'Cinzel', serif; }
-
                 @keyframes bgParallax {
-                    0% { transform: scale(1.2); filter: brightness(1) blur(4px); }
-                    50% { filter: brightness(1) blur(0px); }
-                    100% { transform: scale(1); filter: brightness(0.6) blur(0px); }
+                    0% { transform: scale(1.2); opacity: 0.5; }
+                    50% { opacity: 1; }
+                    100% { transform: scale(1); opacity: 0.6; }
                 }
 
                 @keyframes textReveal {
-                    0% { opacity: 0; transform: translateY(50px) scale(0.95); filter: blur(15px); }
-                    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+                    0% { opacity: 0; transform: translateY(50px) scale(0.95); }
+                    100% { opacity: 1; transform: translateY(0) scale(1); }
                 }
 
                 @keyframes buttonReveal {
@@ -45,7 +41,8 @@ export function Hero({ data }: { data?: any }) {
                 }
 
                 .animate-bg-parallax {
-                    animation: bgParallax 9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+                    animation: bgParallax 4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+                    will-change: transform, opacity;
                 }
             `}} />
 
@@ -56,7 +53,6 @@ export function Hero({ data }: { data?: any }) {
                     alt="Hero Background"
                     fill
                     priority
-                    unoptimized
                     sizes="100vw"
                     className="object-cover animate-bg-parallax"
                 />
@@ -65,18 +61,18 @@ export function Hero({ data }: { data?: any }) {
             {/* Phase 4: Final Typography Reveal */}
             <div className="absolute top-[40%] sm:top-[42%] md:top-1/2 -translate-y-1/2 left-[5%] md:left-[12%] z-10 flex flex-col items-start gap-0 max-w-[90vw] md:max-w-[80vw]">
                 <h1 
-                    className="font-cinzel text-white leading-[1.05] tracking-wide max-w-[90vw] md:max-w-none break-words whitespace-normal"
+                    className="font-serif text-white leading-[1.05] tracking-wide max-w-[90vw] md:max-w-none break-words whitespace-normal"
                     style={{ textShadow: '0 10px 40px rgba(0,0,0,0.8), 0 2px 10px rgba(0,0,0,0.5)', fontSize: fontStyleStr }}
                 >
-                    {line1 && <span className="block opacity-0" style={{ animation: 'textReveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 5.8s forwards' }}>{line1}</span>}
-                    {subtitle && <span className="block opacity-0" style={{ animation: 'textReveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 6.1s forwards' }}>{subtitle}</span>}
-                    {line2 && <span className="block opacity-0" style={{ animation: 'textReveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 6.4s forwards' }}>{line2}</span>}
+                    {line1 && <span className="block opacity-0" style={{ animation: 'textReveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) 3.2s forwards', willChange: 'transform, opacity' }}>{line1}</span>}
+                    {subtitle && <span className="block opacity-0" style={{ animation: 'textReveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) 3.5s forwards', willChange: 'transform, opacity' }}>{subtitle}</span>}
+                    {line2 && <span className="block opacity-0" style={{ animation: 'textReveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) 3.8s forwards', willChange: 'transform, opacity' }}>{line2}</span>}
                 </h1>
                 
                 {buttonText && (
-                    <div className="mt-8 md:mt-12 overflow-hidden opacity-0" style={{ animation: 'buttonReveal 1s ease-out 7s forwards' }}>
+                    <div className="mt-8 md:mt-12 overflow-hidden opacity-0" style={{ animation: 'buttonReveal 0.8s ease-out 4.2s forwards', willChange: 'transform, opacity' }}>
                         <button 
-                            className="font-cinzel text-white/70 text-[10px] md:text-[13px] tracking-[0.3em] md:tracking-[0.4em] uppercase hover:text-white transition-colors duration-500 border-b border-white/20 hover:border-white/60 pb-2"
+                            className="font-serif text-white/70 text-[10px] md:text-[13px] tracking-[0.3em] md:tracking-[0.4em] uppercase hover:text-white transition-colors duration-500 border-b border-white/20 hover:border-white/60 pb-2"
                             onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
                         >
                             {buttonText}

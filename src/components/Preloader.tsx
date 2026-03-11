@@ -114,25 +114,6 @@ export default function Preloader() {
                     {/* Logo Text / Icon — clipped for sweep reveal */}
                     <div className="overflow-hidden">
                         <div ref={logoTextRef} className="flex flex-col items-center">
-                            <svg 
-                                width="200" 
-                                height="80" 
-                                viewBox="0 0 160 50" 
-                                fill="none" 
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="mb-4"
-                            >
-                                <g className="text-cream" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M80 5 L80 45" />
-                                    <path d="M80 15 L60 45" />
-                                    <path d="M80 15 L100 45" />
-                                    <path d="M74 23 L86 23" />
-                                    <path d="M70 30 L90 30" />
-                                    <path d="M66 37 L94 37" />
-                                    <path d="M56 45 L104 45" />
-                                    <circle cx="80" cy="7" r="2.5" fill="currentColor" stroke="none" />
-                                </g>
-                            </svg>
                             <h1 className="font-sans text-cream text-[18px] md:text-[24px] font-bold tracking-[0.3em] uppercase">
                                 Guruvells
                             </h1>

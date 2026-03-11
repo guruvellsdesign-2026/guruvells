@@ -32,7 +32,7 @@ export function ScatteredText({
 
         if (containerRef.current && charsRef.current.length > 0) {
             const isMobile = window.matchMedia("(max-width: 768px)").matches;
-            const scatterRange = isMobile ? 250 : 500;
+            const scatterRange = isMobile ? 120 : 500;
 
             const ctx = gsap.context(() => {
                 const tl = gsap.timeline({
@@ -40,7 +40,8 @@ export function ScatteredText({
                         trigger: containerRef.current,
                         start: startPos,
                         end: endPos,
-                        scrub: 1,
+                        scrub: isMobile ? 0.5 : 1,
+                        fastScrollEnd: true,
                     },
                 });
 
@@ -79,7 +80,7 @@ export function ScatteredText({
         <div
             ref={containerRef}
             className={containerClassName}
-            style={{ minHeight: "150vh" }}
+            style={{ minHeight: typeof window !== 'undefined' && window.innerWidth < 768 ? '120vh' : '150vh' }}
         >
             <div className={`flex flex-wrap items-center justify-center gap-x-[0.4em] gap-y-[0.1em] ${className}`}>
                 {words.map((word, wordIdx) => (

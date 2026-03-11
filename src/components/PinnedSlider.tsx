@@ -41,7 +41,8 @@ export function PinnedSlider({ slides }: PinnedSliderProps) {
                             start: "top top",
                             end: `+=${totalSlides * 100}%`,
                             pin: true,
-                            scrub: 1,
+                            scrub: 0.8,
+                            fastScrollEnd: true,
                             onUpdate: (self) => {
                                 if (counterRef.current) {
                                     const idx = Math.min(
@@ -127,7 +128,6 @@ export function PinnedSlider({ slides }: PinnedSliderProps) {
                                     src={slide.image}
                                     alt={slide.title}
                                     fill
-                                    unoptimized
                                     className="object-cover transition-transform duration-1000 group-hover:scale-105"
                                     sizes="100vw"
                                 />

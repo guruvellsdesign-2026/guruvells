@@ -253,3 +253,68 @@ body {
   50% { transform: translateY(0); }
   100% { transform: translateY(100%); }
 }
+
+/* ── Performance Optimizations ── */
+
+/* GPU compositing hints for smooth animations */
+.will-change-transform {
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Faster tap response on mobile */
+button, a, [role="button"], .interactive {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent layout shifts from font loading */
+html {
+  text-rendering: optimizeSpeed;
+}
+
+/* Optimize images for rendering */
+img, video {
+  content-visibility: auto;
+}
+
+/* Smooth scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dark);
+  border-radius: 3px;
+  opacity: 0.3;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Mobile performance */
+@media (max-width: 768px) {
+  /* Reduce paint area for fixed elements */
+  .fixed {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  
+  /* Optimize backdrop-filter for mobile */
+  .backdrop-blur-xl {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}

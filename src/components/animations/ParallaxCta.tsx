@@ -24,16 +24,19 @@ export function ParallaxCta({ data }: { data?: any }) {
         const columns = sectionRef.current.querySelectorAll('.img-column');
         const wipe = sectionRef.current.querySelector('.white-wipe');
         const ctaText = sectionRef.current.querySelector('.cta-text');
+        const isMobile = window.innerWidth < 768;
 
         const ctx = gsap.context(() => {
             ctaTlRef.current = gsap.timeline({
                 scrollTrigger: {
                     trigger: sectionRef.current,
                     start: "top top",
-                    end: "+=200%",
+                    end: isMobile ? "+=150%" : "+=200%",
                     pin: true,
-                    scrub: 1,
-                    invalidateOnRefresh: true
+                    scrub: isMobile ? 0.5 : 1,
+                    invalidateOnRefresh: true,
+                    fastScrollEnd: true,
+                    preventOverlaps: true,
                 }
             });
 
@@ -42,7 +45,7 @@ export function ParallaxCta({ data }: { data?: any }) {
                 ease: "none",
                 duration: 1,
                 stagger: {
-                    amount: 0.3,
+                    amount: isMobile ? 0.15 : 0.3,
                     from: "random"
                 }
             });
@@ -58,6 +61,7 @@ export function ParallaxCta({ data }: { data?: any }) {
                     duration: 0.8
                 }, "<");
 
+            // Delay ScrollTrigger refresh to avoid layout thrashing
             requestAnimationFrame(() => {
                 ScrollTrigger.refresh();
             });
@@ -124,13 +128,13 @@ export function ParallaxCta({ data }: { data?: any }) {
                 {images.map((col: string[], i: number) => (
                     <div
                         key={i}
-                        className="img-column flex-1 flex flex-col gap-[10vh] border-r border-white/5 last:border-r-0 translate-y-[100vh]"
+                        className="img-column flex-1 flex flex-col gap-[10vh] border-r border-white/5 last:border-r-0 translate-y-[100vh] will-change-transform"
                         style={{ paddingTop: paddings[i] }}
                     >
                         {col.map((img: string, j: number) => (
                             <div
                                 key={j}
-                                className="w-full pt-[130%] bg-[#1a1a1a] bg-cover bg-center transition-[filter] duration-300"
+                                className="w-full pt-[130%] bg-[#1a1a1a] bg-cover bg-center"
                                 style={img ? { backgroundImage: `url(${img})` } : { backgroundColor: i % 2 === 0 ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)' }}
                             />
                         ))}
@@ -139,11 +143,11 @@ export function ParallaxCta({ data }: { data?: any }) {
             </div>
 
             {/* The white mask that wipes up */}
-            <div className="white-wipe absolute bottom-0 left-0 w-full h-[0%] bg-cream z-20" />
+            <div className="white-wipe absolute bottom-0 left-0 w-full h-[0%] bg-cream z-20 will-change-[height]" />
 
             {/* CTA Text - Now Clickable */}
             <div
-                className="cta-text absolute z-30 flex flex-col items-center justify-center text-center text-white text-[7vw] md:text-[5vw] leading-[1.1] font-light tracking-[-0.04em] transition-colors duration-300 cursor-pointer group"
+                className="cta-text absolute z-30 flex flex-col items-center justify-center text-center text-white text-[7vw] md:text-[5vw] leading-[1.1] font-light tracking-[-0.04em] cursor-pointer group"
                 onClick={() => router.push('/contact')}
             >
                 <span className="block text-[0.7rem] md:text-[0.8rem] font-medium uppercase tracking-[0.15em] mb-4 text-inherit transition-transform duration-300 group-hover:-translate-y-1">

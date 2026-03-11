@@ -38,6 +38,8 @@ export function HorizontalProjectSlider({ slides, data }: HorizontalProjectSlide
     useEffect(() => {
         if (!containerRef.current || !trackRef.current || displaySlides.length < 2) return;
 
+        const isMobile = window.innerWidth < 768;
+
         const ctx = gsap.context(() => {
             const track = trackRef.current!;
             const endScroll = window.innerWidth * (displaySlides.length - 1);
@@ -48,27 +50,35 @@ export function HorizontalProjectSlider({ slides, data }: HorizontalProjectSlide
                 ease: "none"
             });
 
+            // Throttle counter updates to reduce DOM writes during scroll
+            let lastSlide = -1;
+
             ScrollTrigger.create({
                 trigger: containerRef.current,
                 start: "top top",
                 end: () => `+=${endScroll}`,
                 pin: true,
                 animation: hTween,
-                scrub: 1,
+                scrub: isMobile ? 0.5 : 1,
                 invalidateOnRefresh: true,
+                fastScrollEnd: true,
+                preventOverlaps: true,
                 onUpdate: (self) => {
-                    // 1. Safe Counter Update
+                    // Throttled counter update — only update DOM when slide changes
                     if (counterRef.current) {
                         const currentSlide = Math.min(
                             displaySlides.length,
                             Math.floor(self.progress * displaySlides.length) + 1
                         );
-                        counterRef.current.textContent = `[${currentSlide}/${displaySlides.length}]`;
+                        if (currentSlide !== lastSlide) {
+                            lastSlide = currentSlide;
+                            counterRef.current.textContent = `[${currentSlide}/${displaySlides.length}]`;
+                        }
                     }
                 }
             });
 
-            // 2. Safe Scoped Progress Line animation
+            // Safe Scoped Progress Line animation
             if (progressLineRef.current) {
                 gsap.to(progressLineRef.current, {
                     width: "100%",
@@ -77,7 +87,7 @@ export function HorizontalProjectSlider({ slides, data }: HorizontalProjectSlide
                         trigger: containerRef.current,
                         start: "top top",
                         end: () => `+=${endScroll}`,
-                        scrub: 1,
+                        scrub: isMobile ? 0.5 : 1,
                         invalidateOnRefresh: true
                     }
                 });
@@ -94,7 +104,7 @@ export function HorizontalProjectSlider({ slides, data }: HorizontalProjectSlide
         >
             <div
                 ref={trackRef}
-                className="flex h-full"
+                className="flex h-full will-change-transform"
                 style={{ width: `${displaySlides.length * 100}vw` }}
             >
                 {displaySlides.map((slide: any, i: number) => {
@@ -107,19 +117,15 @@ export function HorizontalProjectSlider({ slides, data }: HorizontalProjectSlide
                             key={i}
                             className="w-screen h-screen flex flex-col md:flex-row items-center justify-center flex-shrink-0 px-6 md:px-[6vw] relative pt-16 md:pt-0"
                         >
-                            {/* Layout refactored to Flex instead of Absolute for robustness */}
-                            
                             {/* 1. Left Column (Title & Project Number) */}
                             <div className="w-full md:w-[35%] flex flex-col z-20 mb-3 md:mb-0 pointer-events-none md:pr-[2vw]">
                                 <p className="text-[0.65rem] md:text-[0.7rem] tracking-widest text-white/50 font-medium uppercase font-sans mb-3 md:mb-8">
                                     PROJECT {String(i + 1).padStart(2, "0")}
                                 </p>
                                 <h2 className="text-[clamp(1.5rem,4vw,4.5rem)] leading-[1.05] md:leading-[1.1] tracking-tight text-white font-sans flex flex-col">
-                                    {/* Pure solid white top half */}
                                     <span className="relative z-20 whitespace-normal break-words">
                                         {titleFirstHalf}
                                     </span>
-                                    {/* Transparent outlined bottom half */}
                                     <span 
                                         className="relative z-20 text-transparent whitespace-normal break-words block mt-[-2%]" 
                                         style={{ WebkitTextStroke: "1px rgba(255, 255, 255, 0.7)" }}
@@ -138,7 +144,6 @@ export function HorizontalProjectSlider({ slides, data }: HorizontalProjectSlide
                                     src={slide.image || slide.imageUrl || ''}
                                     alt={slide.title}
                                     fill
-                                    unoptimized
                                     className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                                     sizes="(max-width: 768px) 100vw, 45vw"
                                     priority={i === 0}
@@ -178,7 +183,7 @@ export function HorizontalProjectSlider({ slides, data }: HorizontalProjectSlide
             <div className="absolute bottom-[4vh] md:bottom-[6vh] left-[6vw] right-[6vw] md:left-[8vw] md:right-[8vw] flex flex-col z-30 pointer-events-none">
                 {/* Thin progress track */}
                 <div className="w-full h-[1px] bg-white/15 flex items-center mb-4 md:mb-5 relative">
-                    <div ref={progressLineRef} className="absolute left-0 top-0 bottom-0 bg-white w-0" />
+                    <div ref={progressLineRef} className="absolute left-0 top-0 bottom-0 bg-white w-0 will-change-[width]" />
                 </div>
 
                 {/* Bottom UI text */}

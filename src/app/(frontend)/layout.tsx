@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, Cinzel } from "next/font/google";
 import SmoothScroll from "@/components/SmoothScroll";
 import { Navigation } from "@/components/Navigation";
 import { client, projectId } from "@/sanity/lib/client";
@@ -17,6 +17,12 @@ const inter = Inter({
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
+});
+
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 // Only try to fetch from Sanity if a real project ID is configured
@@ -62,7 +68,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${playfair.variable} antialiased`}
+        className={`${inter.variable} ${playfair.variable} ${cinzel.variable} antialiased`}
       >
         <Navigation navData={navData} />
         <SmoothScroll>{children}</SmoothScroll>

@@ -10,14 +10,7 @@ if (typeof window !== "undefined") {
 }
 
 /*
- * Elicyon-Style Scroll Parallax
- *
- * Characteristics:
- * - Elegant, thinner, smaller typography (clamp(1.5rem, 3.5vw, 4.5rem)).
- * - Text is initially grouped as a readable paragraph.
- * - On scroll, the top lines fly upward rapidly and FADE OUT to 0 opacity.
- * - The bottom lines move much slower, lingering on screen to anchor the layout.
- * - Floating background portal images drift behind the text.
+ * Elicyon-Style Scroll Parallax — Performance Optimized
  */
 
 const TEXT_LAYERS = [
@@ -31,14 +24,9 @@ const TEXT_LAYERS = [
 ];
 
 const FLOATING_IMAGES = [
-    // Proportionally matched across all viewports — desktop ~16-24vw, mobile ~20-30vw
-    // Image 1: Left side accent
     { src: "/project1.png", wrapperClass: "bottom-[15%] left-[-2%] w-[25vw] md:bottom-[5%] md:left-[8%] md:w-[16vw] aspect-[3/4] rounded-sm overflow-hidden", speed: -600 },
-    // Image 2: Top-right corner
     { src: "/project2.png", wrapperClass: "top-[-2%] right-[-2%] w-[22vw] md:top-[10%] md:right-[5%] md:w-[20vw] aspect-[4/5] rounded-sm overflow-hidden", speed: -800 },
-    // Image 3: Scrolls up from below — wider landscape
     { src: "/hero.png", wrapperClass: "top-[110%] left-[5%] w-[35vw] md:top-[110%] md:left-[15%] md:w-[24vw] aspect-[16/9] rounded-sm overflow-hidden opacity-90", speed: -1200 },
-    // Image 4: Scrolls up from below right
     { src: "/project1.png", wrapperClass: "top-[130%] right-[-2%] w-[20vw] md:top-[130%] md:right-[12%] md:w-[15vw] aspect-[3/4] rounded-sm overflow-hidden opacity-80", speed: -1500 },
 ];
 
@@ -52,7 +40,7 @@ export function ParallaxPhilosophy({ data }: { data?: any }) {
     const hasData = !!data;
     const textLayers = hasData && data.textLayers
         ? data.textLayers.map((text: string, i: number) => ({
-            ...TEXT_LAYERS[Math.min(i, TEXT_LAYERS.length - 1)], // Borrow styling and speed from fallback
+            ...TEXT_LAYERS[Math.min(i, TEXT_LAYERS.length - 1)],
             text,
         }))
         : TEXT_LAYERS;
@@ -60,47 +48,52 @@ export function ParallaxPhilosophy({ data }: { data?: any }) {
     const urls = data?.floatingImageUrls || data?.imageUrls;
     const floatingImages = hasData && urls
         ? urls.map((url: string, i: number) => ({
-            ...FLOATING_IMAGES[Math.min(i, FLOATING_IMAGES.length - 1)], // Borrow wrapper/speed from fallback
+            ...FLOATING_IMAGES[Math.min(i, FLOATING_IMAGES.length - 1)],
             src: url,
         }))
         : FLOATING_IMAGES;
 
     useEffect(() => {
+        const isMobile = window.innerWidth < 768;
+        // Scale down yTarget values on mobile for smoother animation
+        const mobileScale = isMobile ? 0.5 : 1;
+
         const ctx = gsap.context(() => {
             
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: sectionRef.current,
                     start: "center center", 
-                    end: "+=250%", // Extended pin for the shatter effect
+                    end: isMobile ? "+=180%" : "+=250%",
                     pin: true,
-                    scrub: 1, // Smooth scrub
+                    scrub: isMobile ? 0.5 : 1,
+                    fastScrollEnd: true,
+                    preventOverlaps: true,
                 }
             });
 
-            // 1. Vertical Shatter & Fade Out
-            // Top lines fly up and fade to 0. Bottom lines stay near 1 opacity.
+            // 1. Vertical Shatter & Fade Out — scaled for mobile
             textRefs.current.forEach((layer, i) => {
                 if (!layer) return;
                 
                 const styleData = textLayers[i];
-                const isAnchor = i >= textLayers.length - 2; // Last two lines stay mostly visible
+                const isAnchor = i >= textLayers.length - 2;
                 
                 tl.to(layer, {
-                    y: styleData.yTarget,
+                    y: styleData.yTarget * mobileScale,
                     opacity: isAnchor ? 1 : 0, 
                     ease: "power1.inOut"
-                }, 0); // All trigger at 0
+                }, 0);
             });
 
-            // 2. Image Parallax
+            // 2. Image Parallax — scaled for mobile
             imageRefs.current.forEach((img, i) => {
                 if (!img) return;
                 
                 const styleData = floatingImages[i];
                 tl.to(img, {
-                    y: styleData.speed,
-                    ease: "none", // Linear for images
+                    y: styleData.speed * mobileScale,
+                    ease: "none",
                 }, 0);
             });
 
@@ -122,9 +115,9 @@ export function ParallaxPhilosophy({ data }: { data?: any }) {
                 <div
                     key={i}
                     ref={(el) => { imageRefs.current[i] = el; }}
-                    className={`absolute z-[1] overflow-hidden mix-blend-multiply transition-opacity duration-1000 ${img.wrapperClass}`}
+                    className={`absolute z-[1] overflow-hidden mix-blend-multiply will-change-transform ${img.wrapperClass}`}
                 >
-                    <Image src={img.src} alt="" fill unoptimized className="object-cover" />
+                    <Image src={img.src} alt="" fill sizes="(max-width: 768px) 35vw, 24vw" className="object-cover" />
                 </div>
             ))}
 

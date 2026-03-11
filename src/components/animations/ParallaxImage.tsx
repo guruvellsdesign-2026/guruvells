@@ -45,7 +45,8 @@ export function ParallaxImage({
                             trigger: containerRef.current,
                             start: "top bottom",
                             end: "bottom top",
-                            scrub: true,
+                            scrub: 0.5,
+                            fastScrollEnd: true,
                         },
                     }
                 );
@@ -85,14 +86,13 @@ export function ParallaxImage({
             {/* Spec: inner image must be scale(1.2) to give room for parallax travel */}
             <div
                 ref={imageRef}
-                className="absolute inset-0 w-full h-full"
+                className="absolute inset-0 w-full h-full will-change-transform"
                 style={{ transform: "scale(1.2)" }}
             >
                 <Image
                     src={src}
                     alt={alt}
                     fill
-                    unoptimized
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className={imageClassName}
                     priority={priority}

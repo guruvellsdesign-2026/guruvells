@@ -9,7 +9,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
 
     const isStudio = pathname?.startsWith("/studio");
 
-    // Re-trigger animation on every route change
+    // Re-trigger animation on every route change — optimized timing
     useEffect(() => {
         if (isStudio) {
             setIsAnimating(false);
@@ -17,11 +17,10 @@ export default function Template({ children }: { children: React.ReactNode }) {
         }
         
         setIsAnimating(true);
-        // The animation duraton is roughly 7s total, but the mask clears by ~4.5s.
-        // We'll unmount the heavy SVG from the DOM after 7s to restore click interactivity to the page below.
+        // Reduced from 7s to 3s for much faster page entry
         const timer = setTimeout(() => {
             setIsAnimating(false);
-        }, 7000);
+        }, 3000);
 
         return () => clearTimeout(timer);
     }, [pathname, isStudio]);
@@ -36,46 +35,40 @@ export default function Template({ children }: { children: React.ReactNode }) {
             {/* The actual page content stays mounted below the mask */}
             {children}
 
-            {/* Global Page Transition Mask */}
+            {/* Global Page Transition Mask — GPU-optimized */}
             {isAnimating && (
-                <div className="fixed inset-0 z-[999] pointer-events-none">
+                <div className="fixed inset-0 z-[999] pointer-events-none will-change-transform">
                     <style dangerouslySetInnerHTML={{ __html: `
-                        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap');
-
-                        .font-cinzel { font-family: 'Cinzel', serif; }
-
                         @keyframes introTextAnim {
-                            0% { opacity: 0; filter: blur(20px); transform: scale(0.85) translateY(20px); }
-                            25% { opacity: 1; filter: blur(0px); transform: scale(1) translateY(0); }
-                            75% { opacity: 1; filter: blur(0px); transform: scale(1.05) translateY(0); }
-                            100% { opacity: 0; filter: blur(20px); transform: scale(1.2) translateY(-20px); }
+                            0% { opacity: 0; transform: translateY(20px); }
+                            25% { opacity: 1; transform: translateY(0); }
+                            75% { opacity: 1; transform: translateY(0); }
+                            100% { opacity: 0; transform: translateY(-20px); }
                         }
 
                         @keyframes globalVelMaster {
                             0% { opacity: 0; transform: scale(1); }
-                            40% { /* 2.8s */
+                            30% {
                                 opacity: 0;
                                 transform: scale(1);
-                                animation-timing-function: ease-out;
                             }
-                            48% { /* ~3.3s */
+                            40% {
                                 opacity: 1;
                                 transform: scale(1);
-                                animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1);
                             }
-                            60% { /* 4.2s */
+                            55% {
                                 opacity: 1;
                                 transform: scale(0.75);
-                                animation-timing-function: cubic-bezier(0.9, 0, 0.1, 1);
                             }
-                            100% { /* 7s */
+                            100% {
                                 opacity: 1;
                                 transform: scale(500);
                             }
                         }
 
                         .animate-global-vel {
-                            animation: globalVelMaster 7s forwards;
+                            animation: globalVelMaster 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                            will-change: transform, opacity;
                         }
                     `}} />
 
@@ -105,16 +98,17 @@ export default function Template({ children }: { children: React.ReactNode }) {
                         <rect x="0" y="0" width="100%" height="100%" fill="#4f8cd8" mask="url(#global-vel-mask)" />
                     </svg>
 
-                    {/* Phase 1: Intro GURUVELLS Text (Fades out completely by 3.5s) */}
+                    {/* Phase 1: Intro GURUVELLS Text (faster timing) */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
-                        <div className="font-cinzel text-white text-[clamp(1.5rem,5vw,6rem)] tracking-[0.2em] md:tracking-[0.8em] font-medium uppercase pl-[0.2em] md:pl-[0.8em] flex">
+                        <div className="font-serif text-white text-[clamp(1.5rem,5vw,6rem)] tracking-[0.2em] md:tracking-[0.8em] font-medium uppercase pl-[0.2em] md:pl-[0.8em] flex">
                             {"GURUVELLS".split("").map((letter, index) => (
                                 <span 
                                     key={index} 
                                     style={{ 
-                                        animation: 'introTextAnim 3.2s forwards',
-                                        animationDelay: `${index * 0.08}s`,
-                                        opacity: 0
+                                        animation: 'introTextAnim 1.8s forwards',
+                                        animationDelay: `${index * 0.06}s`,
+                                        opacity: 0,
+                                        willChange: 'transform, opacity',
                                     }}
                                 >
                                     {letter}

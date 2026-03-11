@@ -14,7 +14,7 @@ export function Navigation({ navData }: { navData?: any }) {
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
         };
-        window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
@@ -92,34 +92,15 @@ export function Navigation({ navData }: { navData?: any }) {
                     </button>
                 </div>
 
-                {/* Center: Logo */}
+                {/* Center: Logo — Text Only */}
                 <div className="flex justify-center justify-self-center z-[101]">
                     <button
                         onClick={handleLogoClick}
-                        className="group relative flex items-center justify-center interactive px-0 py-2 origin-center gap-3 lg:gap-4"
+                        className="group relative flex items-center justify-center interactive px-0 py-2 origin-center"
                         aria-label="Guruvells Logo"
                     >
-                        {/* New Abstract Architectural 'G' Monogram */}
-                        <svg 
-                            width="28" 
-                            height="28" 
-                            viewBox="0 0 24 24" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            xmlns="http://www.w3.org/2000/svg"
-                            className={`transition-all duration-700 group-hover:scale-110 group-hover:rotate-[-5deg] ${textColorClass}`}
-                        >
-                            <path 
-                                d="M 17.6 6.4 A 8 8 0 1 0 12 20 L 20 20 L 20 12 L 14 12" 
-                                strokeWidth="1.5" 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                            />
-                            <circle cx="14" cy="12" r="1.5" fill="currentColor" stroke="none" />
-                        </svg>
-                        
                         {/* Editorial Typography Stack */}
-                        <div className="flex flex-col items-start pt-[2px] transition-transform duration-700 group-hover:translate-x-1">
+                        <div className="flex flex-col items-center transition-transform duration-700 group-hover:scale-105">
                             <span className={`font-sans text-[13px] md:text-[15px] font-bold tracking-[0.25em] uppercase leading-none ${textColorClass}`}>
                                 Guruvells
                             </span>
