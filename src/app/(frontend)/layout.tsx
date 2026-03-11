@@ -4,7 +4,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import { Navigation } from "@/components/Navigation";
 import { client, projectId } from "@/sanity/lib/client";
 import { globalSettingsQuery, navigationQuery } from "@/sanity/lib/queries";
-import "./globals.css";
+import "../globals.css";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
