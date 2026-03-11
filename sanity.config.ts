@@ -10,7 +10,7 @@ const singletonTypes = new Set([
 ]);
 
 export default defineConfig({
-    projectId: 'oadbn6pm0',
+    projectId: 'do4k1nvo',
     dataset: 'production',
     basePath: typeof window !== 'undefined' && window.location.pathname.startsWith('/studio') ? '/studio' : undefined,
     title: 'Guruvells Studio',
